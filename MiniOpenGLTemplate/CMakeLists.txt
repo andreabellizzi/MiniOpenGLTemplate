@@ -1,12 +1,41 @@
-﻿# CMakeList.txt : CMake project for MiniOpenGLTemplate, include source and define
-# project specific logic here.
-#
+﻿cmake_minimum_required(VERSION 3.8)
+project(MiniOpenGLTemplate)
 
-# Add source to this project's executable.
-add_executable (MiniOpenGLTemplate "MiniOpenGLTemplate.cpp" "MiniOpenGLTemplate.h")
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set_property(TARGET MiniOpenGLTemplate PROPERTY CXX_STANDARD 20)
-endif()
+# Add source files
+set(SOURCE_FILES
+    MiniOpenGLTemplate.cpp
+)
 
-# TODO: Add tests and install targets if needed.
+# Add GLAD source
+set(GLAD_SRC
+    src/glad.c
+)
+
+add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${GLAD_SRC})
+
+# Include directories for all dependencies
+target_include_directories(${PROJECT_NAME} PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/headers
+)
+
+# Link GLFW (prebuilt static library)
+add_library(glfw STATIC IMPORTED)
+set_target_properties(glfw PROPERTIES
+    IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/lib/glfw3.lib"
+    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/headers"
+)
+
+# Find and link OpenGL
+find_package(OpenGL REQUIRED)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE
+    OpenGL::GL
+    glfw
+)
+
+# Optionally, if you want to link against glad as a library (not needed here since glad.c is compiled in)
+# add_library(glad STATIC dependencies/src/glad.c)
+# target_link_libraries(${PROJECT_NAME} PRIVATE glad)
