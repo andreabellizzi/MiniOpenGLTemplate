@@ -7,6 +7,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Add source files
 set(SOURCE_FILES
     MiniOpenGLTemplate.cpp
+    utils/Graphics.cpp
+    utils/Shaders.cpp
 )
 
 # Add GLAD source
@@ -14,11 +16,15 @@ set(GLAD_SRC
     src/glad.c
 )
 
+file(COPY ${CMAKE_SOURCE_DIR}/MiniOpenGLTemplate/shaders
+     DESTINATION ${CMAKE_BINARY_DIR}/MiniOpenGLTemplate)
+
 add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${GLAD_SRC})
 
 # Include directories for all dependencies
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/headers
+    ${CMAKE_CURRENT_SOURCE_DIR}/utils
 )
 
 # Link GLFW (prebuilt static library)
